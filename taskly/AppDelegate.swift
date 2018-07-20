@@ -19,9 +19,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
+    // THIS FUNCTION IS CALLED WHENEVER YOUR APPLICATION HAS JUST FINISHED LAUNCHING
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        // initialize taskStore
+        let taskStore = TaskStore()
+
+        // grab the tasksController
+        let tasksCtrl = window?.rootViewController?.childViewControllers.first as? TasksController
+        // set taskStore
+        tasksCtrl?.taskStore = taskStore
         return true
     }
 
