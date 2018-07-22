@@ -10,10 +10,12 @@ import Foundation
 
 class Task {
     var name: String
+    var description: String
     var isDone: Bool
     
-    init(name: String, isDone: Bool = false) {
+    init(name: String, description: String, isDone: Bool = false) {
         self.name = name
+        self.description = ""
         self.isDone = isDone
     }
 }

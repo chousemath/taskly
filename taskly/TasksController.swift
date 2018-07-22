@@ -23,8 +23,12 @@ class TasksController: UITableViewController {
         let addAction = UIAlertAction(title: "Add", style: .default) { _ in
             // grab textfield text
             guard let name = alertCtrl.textFields?.first?.text else { return }
+            var description = ""
+            if alertCtrl.textFields?[1].text != nil {
+                description = alertCtrl.textFields![1].text!
+            }
             // create task
-            let task = Task(name: name)
+            let task = Task(name: name, description: description)
             // add task
             self.taskStore.add(task, at: 0)
             // reload data in TableView
@@ -38,6 +42,9 @@ class TasksController: UITableViewController {
         alertCtrl.addTextField { textField in
             textField.placeholder = "Enter task name"
             textField.addTarget(self, action: #selector(self.handleTextChange), for: .editingChanged)
+        }
+        alertCtrl.addTextField { textField in
+            textField.placeholder = "Enter task description"
         }
         // actually attach the actions to the alert controller
         alertCtrl.addAction(addAction)
@@ -92,6 +99,28 @@ extension TasksController {
 extension TasksController {
     override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 54
+    }
+    
+    override func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { (action, sourceView, completionHandler) in
+            // determine if task is done
+            let isDone = self.taskStore.tasks[indexPath.section][indexPath.row].isDone
+            // remove the task for the to do array
+            self.taskStore.remove(at: indexPath.row, isDone: isDone)
+            // reload table view
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+            // and then indicate that the action was successfully performed
+            print("Action was completed!")
+            completionHandler(true)
+        }
+        deleteAction.image = #imageLiteral(resourceName: "delete")
+        deleteAction.backgroundColor = #colorLiteral(red: 0.7450980544, green: 0.1568627506, blue: 0.07450980693, alpha: 1)
+        
+        return UISwipeActionsConfiguration(actions: [deleteAction])
+    }
+    
+    override func tableView(_ tableView: UITableView, leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        return nil
     }
 }
 
